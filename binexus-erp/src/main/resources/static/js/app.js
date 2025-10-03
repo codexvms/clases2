@@ -1,3 +1,101 @@
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('Binexus ERP listo');
-});
+(function () {
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const themeToggle = document.getElementById('themeToggle');
+    const toastContainer = document.getElementById('toast-container');
+
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const storedTheme = localStorage.getItem('binexus-theme');
+
+    const applyTheme = (theme) => {
+        document.documentElement.setAttribute('data-bs-theme', theme);
+        if (themeToggle) {
+            const icon = themeToggle.querySelector('i');
+            if (icon) {
+                icon.className = theme === 'dark' ? 'bi bi-moon-stars' : 'bi bi-sun';
+            }
+        }
+    };
+
+    const initTheme = () => {
+        const theme = storedTheme || (prefersDark ? 'dark' : 'light');
+        applyTheme(theme);
+    };
+
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-bs-theme') || 'light';
+            const next = current === 'light' ? 'dark' : 'light';
+            applyTheme(next);
+            localStorage.setItem('binexus-theme', next);
+        });
+    }
+
+    if (sidebar && sidebarToggle) {
+        sidebarToggle.addEventListener('click', () => {
+            if (window.innerWidth < 992) {
+                sidebar.classList.toggle('show');
+            } else {
+                sidebar.classList.toggle('collapsed');
+            }
+        });
+    }
+
+    const showToast = (message, type = 'success') => {
+        if (!toastContainer) {
+            return;
+        }
+        const toast = document.createElement('div');
+        toast.className = `toast align-items-center text-bg-${type} border-0`;
+        toast.setAttribute('role', 'alert');
+        toast.setAttribute('aria-live', 'assertive');
+        toast.setAttribute('aria-atomic', 'true');
+        toast.innerHTML = `<div class="d-flex"><div class="toast-body">${message}</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button></div>`;
+        toastContainer.appendChild(toast);
+        const bootstrapToast = new bootstrap.Toast(toast, {delay: 4000});
+        bootstrapToast.show();
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+        initTheme();
+        const toastMessage = document.body.dataset.toastSuccess;
+        if (toastMessage) {
+            showToast(toastMessage, 'success');
+        }
+
+        const chartElement = document.getElementById('ventasChart');
+        if (chartElement) {
+            new Chart(chartElement, {
+                type: 'line',
+                data: {
+                    labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+                    datasets: [{
+                        label: 'Ventas',
+                        data: [12, 19, 9, 15, 22, 30, 18],
+                        fill: false,
+                        borderColor: '#0d6efd',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {display: false}
+                    }
+                }
+            });
+        }
+
+        document.querySelectorAll('form.needs-validation').forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    });
+
+    window.Binexus = {showToast};
+})();

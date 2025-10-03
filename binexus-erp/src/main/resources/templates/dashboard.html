@@ -1,18 +1,63 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" layout:decorate="~{layout}">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <title>Dashboard</title>
+</head>
+<body layout:decorate="~{layout}">
 <section layout:fragment="content">
-    <div class="row">
-        <div class="col-12">
-            <h1 th:text="#{dashboard.title}">Panel de control</h1>
-            <p>Bienvenido, <span th:text="${usuario.nombre}">Usuario</span> (<span th:text="${usuario.email}">correo</span>).</p>
-            <p>Roles:</p>
-            <ul>
-                <li th:each="rol : ${usuario.roles}" th:text="${rol.nombre}">ROLE_USER</li>
-            </ul>
-            <div class="alert alert-info" sec:authorize="hasRole('ADMIN')">
-                Tienes privilegios de administrador.
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 fw-bold">Panel de control</h1>
+            <p class="text-muted mb-0">Resumen general de métricas clave.</p>
+        </div>
+    </div>
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card kpi-card h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-muted">Usuarios activos</h5>
+                    <h2 class="fw-bold">128</h2>
+                    <p class="text-success small mb-0"><i class="bi bi-arrow-up"></i> +12% vs mes anterior</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card kpi-card h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-muted">Organizaciones</h5>
+                    <h2 class="fw-bold">24</h2>
+                    <p class="text-muted small mb-0">Última actualización: hoy</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card kpi-card h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-muted">Locales operativos</h5>
+                    <h2 class="fw-bold">56</h2>
+                    <p class="text-success small mb-0">+3 nuevos este mes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card kpi-card h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-muted">Tickets abiertos</h5>
+                    <h2 class="fw-bold">14</h2>
+                    <p class="text-danger small mb-0">-5% desde ayer</p>
+                </div>
             </div>
         </div>
     </div>
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Ventas por día</h5>
+            <span class="text-muted small">Datos de ejemplo</span>
+        </div>
+        <div class="card-body">
+            <canvas id="ventasChart" width="400" height="160"></canvas>
+        </div>
+    </div>
 </section>
+</body>
 </html>

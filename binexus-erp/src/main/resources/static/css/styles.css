@@ -1,11 +1,69 @@
-body {
-    background-color: #f8f9fa;
+:root {
+    color-scheme: light dark;
 }
 
-main {
-    min-height: 70vh;
+body.layout-body {
+    background-color: var(--bs-body-bg);
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.navbar-brand {
-    font-weight: 600;
+.sidebar {
+    width: 260px;
+    min-height: 100vh;
+    transition: transform 0.3s ease;
+    position: sticky;
+    top: 0;
+}
+
+.sidebar.collapsed {
+    transform: translateX(-260px);
+}
+
+.sidebar .list-group-item {
+    border: none;
+    border-radius: 0;
+    padding: 0.9rem 1.5rem;
+    font-weight: 500;
+}
+
+.sidebar .list-group-item.active,
+.sidebar .list-group-item:hover {
+    background-color: var(--bs-primary-bg-subtle);
+}
+
+.auth-body {
+    background: radial-gradient(circle at 10% 20%, rgba(91, 129, 255, 0.15), transparent 60%),
+                radial-gradient(circle at 90% 10%, rgba(255, 126, 179, 0.2), transparent 60%),
+                var(--bs-body-bg);
+    transition: background 0.3s ease;
+}
+
+.auth-card {
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.kpi-card {
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 10px 30px rgba(15, 20, 50, 0.08);
+}
+
+.toast-container .toast {
+    min-width: 280px;
+}
+
+@media (max-width: 992px) {
+    .sidebar {
+        position: fixed;
+        z-index: 1030;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        transform: translateX(-260px);
+    }
+
+    .sidebar.show {
+        transform: translateX(0);
+    }
 }

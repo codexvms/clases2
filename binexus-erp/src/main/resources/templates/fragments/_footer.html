@@ -1,5 +1,10 @@
-<footer th:fragment="footer" class="bg-light text-center py-3 mt-auto">
-    <div class="container">
-        <small>&copy; <span th:text="${#temporals.format(#temporals.createNow(), 'yyyy')}"></span> Binexus ERP</small>
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+<footer th:fragment="footer" class="mt-auto py-3 bg-body-tertiary border-top">
+    <div class="container text-center small text-muted">
+        © <span th:text="${#dates.format(#dates.createNow(), 'yyyy')}"></span> Binexus ERP. Todos los derechos reservados.
     </div>
 </footer>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<aside th:fragment="sidebar" id="sidebar" class="sidebar bg-body shadow-sm">
+    <div class="sidebar-header p-3 border-bottom">
+        <a class="navbar-brand fw-bold" th:href="@{/dashboard}">
+            <i class="bi bi-boxes me-2"></i>BINEXUS ERP
+        </a>
+    </div>
+    <div class="list-group list-group-flush">
+        <a class="list-group-item list-group-item-action" th:href="@{/dashboard}">
+            <i class="bi bi-speedometer2 me-2"></i>Dashboard
+        </a>
+        <sec:authorize access="hasRole('ADMIN')">
+            <a class="list-group-item list-group-item-action" th:href="@{/admin/users}">
+                <i class="bi bi-people me-2"></i>Usuarios
+            </a>
+            <a class="list-group-item list-group-item-action" th:href="@{/admin/organizations}">
+                <i class="bi bi-building me-2"></i>Organizaciones
+            </a>
+            <a class="list-group-item list-group-item-action" th:href="@{/admin/locals/new}">
+                <i class="bi bi-geo-alt me-2"></i>Nuevo local
+            </a>
+        </sec:authorize>
+        <sec:authorize access="hasRole('ORG_MANAGER')">
+            <a class="list-group-item list-group-item-action" th:href="@{/admin/organizations}">
+                <i class="bi bi-diagram-3 me-2"></i>Gestión Organización
+            </a>
+        </sec:authorize>
+    </div>
+</aside>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <title th:text="${organizacion.id} != null ? 'Editar organización' : 'Nueva organización'"></title>
+</head>
+<body layout:decorate="~{layout}">
+<section layout:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 fw-bold mb-0" th:text="${organizacion.id} != null ? 'Editar organización' : 'Nueva organización'"></h1>
+            <p class="text-muted mb-0">Define la información básica de la organización.</p>
+        </div>
+        <a th:href="@{/admin/organizations}" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-2"></i>Volver</a>
+    </div>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form th:action="@{/admin/organizations}" th:object="${organizacion}" method="post" class="row g-3">
+                <input type="hidden" th:field="*{id}">
+                <div class="col-md-8">
+                    <label for="nombre" class="form-label">Nombre</label>
+                    <input type="text" id="nombre" class="form-control" th:field="*{nombre}" placeholder="Acme S.A.">
+                    <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
+                </div>
+                <div class="col-md-4">
+                    <label for="estado" class="form-label">Estado</label>
+                    <select id="estado" class="form-select" th:field="*{estado}">
+                        <option th:each="estado : ${T(cl.gob.binexus.domain.enums.EstadoOrganizacion).values()}"
+                                th:value="${estado}" th:text="${estado}"></option>
+                    </select>
+                    <div class="invalid-feedback d-block" th:if="${#fields.hasErrors('estado')}" th:errors="*{estado}"></div>
+                </div>
+                <div class="col-12 text-end">
+                    <button class="btn btn-primary" type="submit"><i class="bi bi-save me-2"></i>Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+</body>
+</html>

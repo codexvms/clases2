@@ -1,23 +1,17 @@
 package cl.gob.binexus.service;
 
-import cl.gob.binexus.domain.Usuario;
-import cl.gob.binexus.dto.UsuarioDTO;
+import cl.gob.binexus.domain.entity.Usuario;
+import cl.gob.binexus.dto.UsuarioFormDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import java.util.Optional;
-
 public interface UsuarioService {
 
-    Usuario registrar(UsuarioDTO dto);
+    Page<Usuario> listarUsuarios(String filtro, Pageable pageable);
 
-    Page<Usuario> listarPaginado(Pageable pageable);
+    UsuarioFormDTO obtenerFormulario(Long id);
 
-    Optional<Usuario> buscarPorEmail(String email);
+    Usuario guardarUsuario(UsuarioFormDTO dto);
 
-    Usuario asignarRol(Long usuarioId, String nombreRol);
-
-    Optional<Usuario> buscarPorId(Long id);
-
-    Usuario actualizar(UsuarioDTO dto);
+    void eliminarUsuario(Long id);
 }
