@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: binexus-erp
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/binexus_erp}
+    username: ${DB_USER:binexus}
+    password: ${DB_PASS:binexus}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      pool-name: BinexusHikariCP
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO
+    org.springframework.security: INFO

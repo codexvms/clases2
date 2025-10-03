@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" layout:decorate="~{layout}">
+<section layout:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 th:text="#{admin.users.list}">Lista de usuarios</h1>
+        <a class="btn btn-primary" th:href="@{/admin/users/new}" th:text="#{admin.users.new}">Nuevo usuario</a>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th th:text="#{register.name}">Nombre</th>
+                <th th:text="#{register.email}">Correo</th>
+                <th>Roles</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="usuario : ${usuarios.content}">
+                <td th:text="${usuario.id}">1</td>
+                <td th:text="${usuario.nombre}">Nombre</td>
+                <td th:text="${usuario.email}">correo@binexus.com</td>
+                <td>
+                    <span class="badge bg-secondary me-1" th:each="rol : ${usuario.roles}" th:text="${rol.nombre}">ROLE_USER</span>
+                </td>
+                <td>
+                    <a th:href="@{'/admin/users/' + ${usuario.id} + '/edit'}" class="btn btn-sm btn-outline-primary">Editar</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <nav aria-label="Paginación" th:if="${usuarios.totalPages > 1}">
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${usuarios.first} ? 'disabled'">
+                <a class="page-link" th:href="@{/admin/users(page=${usuarios.number - 1},size=${usuarios.size})}">&laquo;</a>
+            </li>
+            <li class="page-item" th:each="pageNum : ${#numbers.sequence(0, usuarios.totalPages - 1)}"
+                th:classappend="${pageNum == usuarios.number} ? 'active'">
+                <a class="page-link" th:href="@{/admin/users(page=${pageNum},size=${usuarios.size})}" th:text="${pageNum + 1}">1</a>
+            </li>
+            <li class="page-item" th:classappend="${usuarios.last} ? 'disabled'">
+                <a class="page-link" th:href="@{/admin/users(page=${usuarios.number + 1},size=${usuarios.size})}">&raquo;</a>
+            </li>
+        </ul>
+    </nav>
+</section>
+</html>
