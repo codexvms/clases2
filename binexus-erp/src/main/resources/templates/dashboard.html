@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" layout:decorate="~{layout}">
+<section layout:fragment="content">
+    <div class="row">
+        <div class="col-12">
+            <h1 th:text="#{dashboard.title}">Panel de control</h1>
+            <p>Bienvenido, <span th:text="${usuario.nombre}">Usuario</span> (<span th:text="${usuario.email}">correo</span>).</p>
+            <p>Roles:</p>
+            <ul>
+                <li th:each="rol : ${usuario.roles}" th:text="${rol.nombre}">ROLE_USER</li>
+            </ul>
+            <div class="alert alert-info" sec:authorize="hasRole('ADMIN')">
+                Tienes privilegios de administrador.
+            </div>
+        </div>
+    </div>
+</section>
+</html>
