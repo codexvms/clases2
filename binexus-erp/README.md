@@ -47,6 +47,17 @@ java -jar target/binexus-erp-0.0.1-SNAPSHOT.jar
 
 La aplicación quedará disponible en `http://localhost:8080`.
 
+### Ejecutar con base de datos H2 en memoria
+
+Si prefieres evitar instalar PostgreSQL para realizar pruebas locales rápidas, puedes iniciar la aplicación con el perfil `h2`,
+el cual levanta automáticamente una base de datos en memoria y ejecuta las migraciones Flyway sobre ella:
+
+```bash
+SPRING_PROFILES_ACTIVE=h2 mvn spring-boot:run
+```
+
+Al utilizar este perfil también se habilita la consola web de H2 en `http://localhost:8080/h2-console`, utilizando la URL `jdbc:h2:mem:binexus` y usuario `sa` (sin contraseña).
+
 ## Funcionalidades incluidas
 
 - Autenticación vía formulario (`/login`) con Spring Security y BCrypt.
