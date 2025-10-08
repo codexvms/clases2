@@ -10,6 +10,7 @@ import cl.gob.binexus.domain.enums.EstadoPago;
 import cl.gob.binexus.domain.enums.TipoMovimientoInventario;
 import cl.gob.binexus.repository.ProductoRepository;
 import cl.gob.binexus.repository.VentaRepository;
+import cl.gob.binexus.service.CierreCajaService;
 import cl.gob.binexus.service.InventarioService;
 import cl.gob.binexus.service.VentaService;
 import jakarta.persistence.EntityNotFoundException;
@@ -31,13 +32,16 @@ public class VentaServiceImpl implements VentaService {
     private final VentaRepository ventaRepository;
     private final ProductoRepository productoRepository;
     private final InventarioService inventarioService;
+    private final CierreCajaService cierreCajaService;
 
     public VentaServiceImpl(VentaRepository ventaRepository,
                             ProductoRepository productoRepository,
-                            InventarioService inventarioService) {
+                            InventarioService inventarioService,
+                            CierreCajaService cierreCajaService) {
         this.ventaRepository = ventaRepository;
         this.productoRepository = productoRepository;
         this.inventarioService = inventarioService;
+        this.cierreCajaService = cierreCajaService;
     }
 
     @Override
@@ -60,6 +64,9 @@ public class VentaServiceImpl implements VentaService {
         if (venta.getDetalles() == null || venta.getDetalles().isEmpty()) {
             throw new IllegalArgumentException("Debe agregar al menos un producto a la venta");
         }
+
+        cierreCajaService.obtenerCajaAbierta(venta.getUsuario())
+                .orElseThrow(() -> new IllegalArgumentException("Debe abrir una caja antes de registrar ventas"));
 
         List<DetalleVenta> detallesPreparados = new ArrayList<>();
         Map<Long, Inventario> inventarios = new HashMap<>();

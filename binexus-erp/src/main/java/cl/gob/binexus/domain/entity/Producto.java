@@ -1,5 +1,6 @@
 package cl.gob.binexus.domain.entity;
 
+import cl.gob.binexus.domain.entity.support.AuditableEntity;
 import cl.gob.binexus.domain.enums.EstadoProducto;
 import jakarta.persistence.*;
 
@@ -13,7 +14,7 @@ import java.util.List;
         @Index(name = "idx_producto_nombre", columnList = "nombre_producto"),
         @Index(name = "idx_producto_estado", columnList = "estado_producto")
 })
-public class Producto {
+public class Producto extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,12 +1,13 @@
 package cl.gob.binexus.domain.entity;
 
+import cl.gob.binexus.domain.entity.support.AuditableEntity;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "detalle_venta")
-public class DetalleVenta {
+public class DetalleVenta extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

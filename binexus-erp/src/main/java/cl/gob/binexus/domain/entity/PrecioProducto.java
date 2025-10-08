@@ -1,5 +1,6 @@
 package cl.gob.binexus.domain.entity;
 
+import cl.gob.binexus.domain.entity.support.AuditableEntity;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -7,7 +8,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table(name = "precio_producto")
-public class PrecioProducto {
+public class PrecioProducto extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

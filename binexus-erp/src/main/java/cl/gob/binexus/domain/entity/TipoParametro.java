@@ -1,5 +1,6 @@
 package cl.gob.binexus.domain.entity;
 
+import cl.gob.binexus.domain.entity.support.AuditableEntity;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -7,7 +8,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "tipo_parametro")
-public class TipoParametro {
+public class TipoParametro extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

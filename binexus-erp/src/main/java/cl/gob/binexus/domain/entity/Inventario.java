@@ -1,5 +1,6 @@
 package cl.gob.binexus.domain.entity;
 
+import cl.gob.binexus.domain.entity.support.AuditableEntity;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -10,7 +11,7 @@ import java.util.List;
 @Table(name = "inventario", uniqueConstraints = {
         @UniqueConstraint(name = "uk_inventario_producto_org", columnNames = {"id_producto", "id_organizacion"})
 })
-public class Inventario {
+public class Inventario extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

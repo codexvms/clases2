@@ -1,10 +1,11 @@
 package cl.gob.binexus.domain.entity;
 
+import cl.gob.binexus.domain.entity.support.AuditableEntity;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "privilegio")
-public class Privilegio {
+public class Privilegio extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,5 +1,6 @@
 package cl.gob.binexus.domain.entity;
 
+import cl.gob.binexus.domain.entity.support.AuditableEntity;
 import cl.gob.binexus.domain.enums.EstadoPago;
 import cl.gob.binexus.domain.enums.MetodoPago;
 import cl.gob.binexus.domain.enums.TipoVenta;
@@ -16,7 +17,7 @@ import java.util.UUID;
         @Index(name = "idx_venta_fecha", columnList = "fecha_venta"),
         @Index(name = "idx_venta_order", columnList = "order_id", unique = true)
 })
-public class Venta {
+public class Venta extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

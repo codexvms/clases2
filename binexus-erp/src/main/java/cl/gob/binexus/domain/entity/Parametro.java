@@ -1,5 +1,6 @@
 package cl.gob.binexus.domain.entity;
 
+import cl.gob.binexus.domain.entity.support.AuditableEntity;
 import cl.gob.binexus.domain.enums.EstadoParametro;
 import jakarta.persistence.*;
 
@@ -7,7 +8,7 @@ import jakarta.persistence.*;
 @Table(name = "parametro", uniqueConstraints = {
         @UniqueConstraint(name = "uk_parametro_tipo_descripcion", columnNames = {"id_tipo_parametro", "descripcion_parametro"})
 })
-public class Parametro {
+public class Parametro extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
