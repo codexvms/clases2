@@ -1,5 +1,6 @@
 package cl.gob.binexus.domain.entity;
 
+import cl.gob.binexus.domain.entity.support.AuditableEntity;
 import cl.gob.binexus.domain.enums.EstadoOrganizacion;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -8,7 +9,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "organizacion")
-public class Organizacion {
+public class Organizacion extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

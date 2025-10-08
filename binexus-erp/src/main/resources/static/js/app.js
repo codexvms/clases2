@@ -3,6 +3,7 @@
     const sidebarToggle = document.getElementById('sidebarToggle');
     const themeToggle = document.getElementById('themeToggle');
     const toastContainer = document.getElementById('toast-container');
+    const loader = document.getElementById('global-loader');
 
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     const storedTheme = localStorage.getItem('binexus-theme');
@@ -58,9 +59,15 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         initTheme();
-        const toastMessage = document.body.dataset.toastSuccess;
-        if (toastMessage) {
-            showToast(toastMessage, 'success');
+        const {toastSuccess, toastError, toastInfo} = document.body.dataset;
+        if (toastSuccess) {
+            showToast(toastSuccess, 'success');
+        }
+        if (toastError) {
+            showToast(toastError, 'danger');
+        }
+        if (toastInfo) {
+            showToast(toastInfo, 'info');
         }
 
         document.querySelectorAll('form.needs-validation').forEach(form => {
@@ -68,9 +75,19 @@
                 if (!form.checkValidity()) {
                     event.preventDefault();
                     event.stopPropagation();
+                } else if (form.dataset.showLoader === 'true' && loader) {
+                    loader.classList.remove('d-none');
                 }
                 form.classList.add('was-validated');
             }, false);
+        });
+
+        document.querySelectorAll('form[data-show-loader="true"]:not(.needs-validation)').forEach(form => {
+            form.addEventListener('submit', () => {
+                if (loader) {
+                    loader.classList.remove('d-none');
+                }
+            });
         });
     });
 

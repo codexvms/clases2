@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>Cerrar caja</title>
+</head>
+<body>
+<section layout:fragment="content" class="col-lg-10 mx-auto">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 fw-bold mb-1" th:text="${pageTitle}">Cerrar caja</h1>
+            <p class="text-muted mb-0">Revisa los totales registrados y confirma el monto contado para cerrar la caja.</p>
+        </div>
+        <a class="btn btn-outline-secondary" th:href="@{/caja/historial}"><i class="bi bi-clock-history me-1"></i>Historial</a>
+    </div>
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-transparent border-bottom-0 pb-0">
+                    <h2 class="h5 fw-semibold mb-0">Resumen</h2>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-muted">Fecha apertura</span>
+                        <strong th:text="${#temporals.format(resumen.fechaApertura, 'dd/MM/yyyy HH:mm')}"></strong>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-muted">Total ventas</span>
+                        <strong th:text="${#numbers.formatCurrency(resumen.totalVentas)}"></strong>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-muted">Monto inicial</span>
+                        <strong th:text="${#numbers.formatCurrency(resumen.montoInicial)}"></strong>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-muted">Monto esperado</span>
+                        <strong th:text="${#numbers.formatCurrency(resumen.montoFinalEsperado)}"></strong>
+                    </div>
+                    <div class="alert" th:classappend="${resumen.diferencia.signum() == 0} ? ' alert-success' : (resumen.diferencia.signum() > 0 ? ' alert-warning' : ' alert-danger')">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>Diferencia</span>
+                            <strong th:text="${#numbers.formatCurrency(resumen.diferencia)}"></strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h2 class="h5 fw-semibold mb-1">Confirmar cierre</h2>
+                        <p class="text-muted mb-0">Cuenta el efectivo disponible y registra el monto final para completar el cierre.</p>
+                    </div>
+                    <div th:if="${cerrada}" class="alert alert-success" role="alert">
+                        <i class="bi bi-check-circle-fill me-2"></i>La caja se cerró correctamente.
+                    </div>
+                    <form th:if="${caja.estado} == T(cl.gob.binexus.domain.enums.EstadoCaja).ABIERTO"
+                          th:action="@{/caja/cerrar}" th:object="${form}" method="post" class="needs-validation" novalidate
+                          data-show-loader="true">
+                        <div class="mb-3">
+                            <label class="form-label" for="montoFinal">Monto contado</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" class="form-control" id="montoFinal" th:field="*{montoFinal}" step="0.01"
+                                       min="0" required aria-describedby="montoFinalHelp">
+                            </div>
+                            <small id="montoFinalHelp" class="form-text text-muted">Registra el total disponible en caja.</small>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('montoFinal')}" th:errors="*{montoFinal}"></div>
+                        </div>
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <div class="d-flex justify-content-end gap-2">
+                            <a class="btn btn-outline-secondary" th:href="@{/caja/abrir}"><i class="bi bi-door-open me-1"></i>Abrir nueva caja</a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-lock-fill me-1"></i>Cerrar caja
+                            </button>
+                        </div>
+                    </form>
+                    <div th:if="${caja.estado} != T(cl.gob.binexus.domain.enums.EstadoCaja).ABIERTO">
+                        <p class="text-muted">No hay acciones disponibles porque la caja ya se encuentra cerrada.</p>
+                        <a class="btn btn-primary" th:href="@{/caja/historial}"><i class="bi bi-clock me-1"></i>Ver historial</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

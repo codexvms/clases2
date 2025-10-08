@@ -53,6 +53,26 @@ body.layout-body {
     min-width: 280px;
 }
 
+#global-loader {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(3px);
+    z-index: 1080;
+}
+
+[data-bs-theme='light'] #global-loader {
+    background-color: rgba(248, 249, 250, 0.75);
+}
+
+#global-loader .spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
 @media (max-width: 992px) {
     .sidebar {
         position: fixed;

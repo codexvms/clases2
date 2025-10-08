@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+<head>
+    <title>Autorizaciones remotas</title>
+</head>
+<body>
+<section layout:fragment="content" class="col-xxl-10 mx-auto">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+        <div>
+            <h1 class="h3 fw-bold mb-1">Autorizaciones remotas</h1>
+            <p class="text-muted mb-0">Solicita permisos especiales y gestiona las aprobaciones en tiempo real.</p>
+        </div>
+        <form class="d-flex gap-2 align-items-center" method="get" th:action="@{/autorizaciones}">
+            <label class="visually-hidden" for="estado">Estado</label>
+            <select class="form-select" id="estado" name="estado">
+                <option value="" th:selected="${estadoSeleccionado == null}">Todos</option>
+                <option th:each="estado : ${estados}" th:value="${estado}" th:selected="${estado == estadoSeleccionado}"
+                        th:text="${estado}"></option>
+            </select>
+            <button type="submit" class="btn btn-outline-primary"><i class="bi bi-filter me-1"></i>Filtrar</button>
+        </form>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-4" th:if="${caja != null}">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h2 class="h5 fw-semibold mb-2">Solicitar autorización</h2>
+                    <p class="text-muted">Describe la acción que requiere aprobación y enviaremos una alerta al supervisor.</p>
+                    <form th:action="@{/autorizaciones}" method="post" data-show-loader="true" class="needs-validation" novalidate>
+                        <div class="mb-3">
+                            <label class="form-label" for="accion">Acción requerida</label>
+                            <input type="text" class="form-control" id="accion" name="accion" maxlength="120" required
+                                   aria-describedby="accionHelp">
+                            <small id="accionHelp" class="form-text text-muted">Ejemplo: "Modificar precio" o "Anular venta".</small>
+                            <div class="invalid-feedback">Describe la acción que necesitas autorizar.</div>
+                        </div>
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-send me-1"></i>Solicitar autorización
+                        </button>
+                        <p class="small text-muted mt-3 mb-0">Caja abierta desde
+                            <strong th:text="${#temporals.format(caja.fechaApertura, 'dd/MM/yyyy HH:mm')}"></strong>.
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg" th:classappend="${caja == null} ? ' col-12'">
+            <div class="card border-0 shadow-sm">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead class="table-light">
+                        <tr>
+                            <th scope="col">Acción</th>
+                            <th scope="col">Solicitante</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col">Código</th>
+                            <th scope="col">Solicitada</th>
+                            <th scope="col">Resuelta</th>
+                            <th scope="col">Autorizada por</th>
+                            <th scope="col" class="text-end">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:if="${autorizaciones.isEmpty()}">
+                            <td colspan="8" class="text-center py-5 text-muted">No se registran autorizaciones para el filtro seleccionado.</td>
+                        </tr>
+                        <tr th:each="autorizacion : ${autorizaciones}">
+                            <td>
+                                <strong th:text="${autorizacion.accion}"></strong>
+                            </td>
+                            <td>
+                                <span th:text="${autorizacion.solicitante.nombre}"></span>
+                                <small class="d-block text-muted" th:text="${autorizacion.solicitante.correo}"></small>
+                            </td>
+                            <td>
+                                <span class="badge rounded-pill"
+                                      th:classappend="${autorizacion.estado.name() == 'APROBADA'} ? ' bg-success-subtle text-success-emphasis' : (autorizacion.estado.name() == 'RECHAZADA' ? ' bg-danger-subtle text-danger-emphasis' : ' bg-warning-subtle text-warning-emphasis')"
+                                      th:text="${autorizacion.estado}"></span>
+                            </td>
+                            <td><code th:text="${autorizacion.codigoVerificacion}"></code></td>
+                            <td th:text="${#temporals.format(autorizacion.fechaSolicitud, 'dd/MM/yyyy HH:mm')}"></td>
+                            <td th:text="${autorizacion.fechaResolucion != null ? #temporals.format(autorizacion.fechaResolucion, 'dd/MM/yyyy HH:mm') : '-'}"></td>
+                            <td th:text="${autorizacion.autorizadoPor != null ? autorizacion.autorizadoPor.nombre : '-'}"></td>
+                            <td class="text-end">
+                                <div th:if="${autorizacion.estado.name() == 'PENDIENTE'}" class="btn-group" role="group"
+                                     aria-label="Resolver autorización">
+                                    <button type="button" class="btn btn-outline-success btn-sm btn-resolver"
+                                            data-estado="APROBADA" th:data-id="${autorizacion.id}">
+                                        <i class="bi bi-check-circle me-1"></i>Aprobar
+                                    </button>
+                                    <button type="button" class="btn btn-outline-danger btn-sm btn-resolver"
+                                            data-estado="RECHAZADA" th:data-id="${autorizacion.id}">
+                                        <i class="bi bi-x-circle me-1"></i>Rechazar
+                                    </button>
+                                </div>
+                                <span th:if="${autorizacion.estado.name() != 'PENDIENTE'}" class="text-muted">Sin acciones</span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <form id="resolverForm" method="post" class="d-none">
+        <input type="hidden" name="estado" id="resolverEstado">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+    </form>
+</section>
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        const resolverForm = document.getElementById('resolverForm');
+        const estadoInput = document.getElementById('resolverEstado');
+        document.querySelectorAll('.btn-resolver').forEach((button) => {
+            button.addEventListener('click', () => {
+                const id = button.dataset.id;
+                const estado = button.dataset.estado;
+                const actionUrl = `/autorizaciones/${id}/resolver`;
+                Swal.fire({
+                    title: estado === 'APROBADA' ? '¿Aprobar solicitud?' : '¿Rechazar solicitud?',
+                    text: 'Esta acción no se puede deshacer.',
+                    icon: estado === 'APROBADA' ? 'success' : 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: estado === 'APROBADA' ? 'Sí, aprobar' : 'Sí, rechazar',
+                    cancelButtonText: 'Cancelar',
+                    focusCancel: true
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        resolverForm.action = actionUrl;
+                        estadoInput.value = estado;
+                        resolverForm.submit();
+                    }
+                });
+            });
+        });
+    });
+</script>
+</body>
+</html>

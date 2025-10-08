@@ -55,6 +55,17 @@ La aplicación quedará disponible en `http://localhost:8080`.
 - Gestión de organizaciones y locales con formularios Thymeleaf responsivos.
 - Layout reutilizable con fragmentos, modo claro/oscuro, toasts y Chart.js en el dashboard.
 - Migraciones Flyway y configuración productiva (`ddl-auto=validate`).
+- Módulo de cierre de caja con historial, aperturas controladas y resumen de ventas.
+- Solicitudes de autorizaciones remotas con aprobación por usuarios administradores y seguimiento de estados.
+- Auditoría automática (`created_at` / `updated_at`) para las principales entidades del dominio.
+
+### Guía rápida: cierre de caja y autorizaciones
+
+1. **Apertura de caja**: navega a `Caja → Abrir` e ingresa el monto inicial. El sistema valida que no exista otra caja abierta para el usuario en curso.
+2. **Registro de ventas**: mientras exista una caja abierta, las ventas quedan asociadas al cierre activo; si no hay caja abierta, el servicio de ventas bloquea la operación.
+3. **Cierre de caja**: desde `Caja → Cerrar` revisa el resumen de ventas y confirma el cierre para almacenar la fecha y calcular las diferencias.
+4. **Historial**: consulta `Caja → Historial` para revisar aperturas y cierres previos ordenados cronológicamente.
+5. **Autorizaciones remotas**: ante acciones restringidas (anular venta, modificar precios, etc.) solicita una autorización y comparte el código generado con un supervisor. Los administradores aprueban o rechazan desde `Autorizaciones`, manteniendo un registro auditable.
 
 ## Pruebas
 
@@ -63,6 +74,8 @@ Ejecuta las pruebas unitarias y de integración con:
 ```bash
 mvn test
 ```
+
+Las pruebas actuales validan las reglas de negocio del cierre de caja y el flujo principal del controlador de autorizaciones remotas.
 
 ## Buenas prácticas de seguridad
 

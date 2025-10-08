@@ -11,6 +11,12 @@
         <a class="list-group-item list-group-item-action" th:href="@{/dashboard}">
             <i class="bi bi-speedometer2 me-2"></i>Dashboard
         </a>
+        <a class="list-group-item list-group-item-action" th:href="@{/caja/cerrar}">
+            <i class="bi bi-cash-stack me-2"></i>Cierre de caja
+        </a>
+        <a class="list-group-item list-group-item-action" th:href="@{/autorizaciones}">
+            <i class="bi bi-shield-check me-2"></i>Autorizaciones remotas
+        </a>
         <sec:authorize access="hasRole('ADMIN')">
             <a class="list-group-item list-group-item-action" th:href="@{/admin/users}">
                 <i class="bi bi-people me-2"></i>Usuarios

@@ -1,5 +1,6 @@
 package cl.gob.binexus.domain.entity;
 
+import cl.gob.binexus.domain.entity.support.AuditableEntity;
 import cl.gob.binexus.domain.enums.EstadoCliente;
 import jakarta.persistence.*;
 
@@ -7,7 +8,7 @@ import jakarta.persistence.*;
 @Table(name = "cliente", uniqueConstraints = {
         @UniqueConstraint(name = "uk_cliente_org_correo", columnNames = {"id_organizacion", "correo_cliente"})
 })
-public class Cliente {
+public class Cliente extends AuditableEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
