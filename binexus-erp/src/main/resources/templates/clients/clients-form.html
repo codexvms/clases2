@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <title>Cliente</title>
+</head>
+<body layout:decorate="~{layout}">
+<section layout:fragment="content" class="col-lg-6 mx-auto">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 fw-bold" th:text="${pageTitle}">Cliente</h1>
+            <p class="text-muted mb-0">Completa los datos de contacto del cliente.</p>
+        </div>
+        <a class="btn btn-outline-secondary" th:href="@{/clientes}"><i class="bi bi-arrow-left me-1"></i>Volver</a>
+    </div>
+    <form th:action="@{/clientes}" th:object="${cliente}" method="post" class="needs-validation" novalidate>
+        <input type="hidden" th:field="*{id}">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label class="form-label" for="nombre">Nombre</label>
+                <input type="text" id="nombre" class="form-control" th:field="*{nombre}" required>
+                <div class="invalid-feedback">El nombre es obligatorio.</div>
+                <div class="text-danger small" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="organizacionId">Organización</label>
+                <select id="organizacionId" class="form-select" th:field="*{organizacionId}" required>
+                    <option value="">Selecciona una organización</option>
+                    <option th:each="org : ${organizaciones}" th:value="${org.id}" th:text="${org.nombre}"></option>
+                </select>
+                <div class="invalid-feedback">Selecciona una organización válida.</div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="correo">Correo electrónico</label>
+                <input type="email" id="correo" class="form-control" th:field="*{correo}" required>
+                <div class="invalid-feedback">Ingresa un correo válido.</div>
+                <div class="text-danger small" th:if="${#fields.hasErrors('correo')}" th:errors="*{correo}"></div>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="telefono">Teléfono</label>
+                <input type="text" id="telefono" class="form-control" th:field="*{telefono}">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="estado">Estado</label>
+                <select id="estado" class="form-select" th:field="*{estado}">
+                    <option th:each="estadoOpt : ${estados}" th:value="${estadoOpt}" th:text="${estadoOpt}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="text-danger mt-3" th:if="${#fields.hasGlobalErrors()}" th:each="err : ${#fields.globalErrors()}"
+             th:text="${err}"></div>
+        <div class="d-flex justify-content-end gap-2 mt-4">
+            <a class="btn btn-light" th:href="@{/clientes}">Cancelar</a>
+            <button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i>Guardar</button>
+        </div>
+    </form>
+</section>
+</body>
+</html>

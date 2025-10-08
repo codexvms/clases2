@@ -15,36 +15,36 @@
         <div class="col-md-3">
             <div class="card kpi-card h-100">
                 <div class="card-body">
-                    <h5 class="card-title text-muted">Usuarios activos</h5>
-                    <h2 class="fw-bold">128</h2>
-                    <p class="text-success small mb-0"><i class="bi bi-arrow-up"></i> +12% vs mes anterior</p>
+                    <h5 class="card-title text-muted">Productos activos</h5>
+                    <h2 class="fw-bold" th:text="${productosActivos}">0</h2>
+                    <p class="text-muted small mb-0">Disponibles para venta</p>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card kpi-card h-100">
                 <div class="card-body">
-                    <h5 class="card-title text-muted">Organizaciones</h5>
-                    <h2 class="fw-bold">24</h2>
-                    <p class="text-muted small mb-0">Última actualización: hoy</p>
+                    <h5 class="card-title text-muted">Ventas del mes</h5>
+                    <h2 class="fw-bold" th:text="${ventasMes}">0</h2>
+                    <p class="text-muted small mb-0">Registros en el periodo actual</p>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card kpi-card h-100">
                 <div class="card-body">
-                    <h5 class="card-title text-muted">Locales operativos</h5>
-                    <h2 class="fw-bold">56</h2>
-                    <p class="text-success small mb-0">+3 nuevos este mes</p>
+                    <h5 class="card-title text-muted">Clientes totales</h5>
+                    <h2 class="fw-bold" th:text="${totalClientes}">0</h2>
+                    <p class="text-muted small mb-0">Clientes registrados</p>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
             <div class="card kpi-card h-100">
                 <div class="card-body">
-                    <h5 class="card-title text-muted">Tickets abiertos</h5>
-                    <h2 class="fw-bold">14</h2>
-                    <p class="text-danger small mb-0">-5% desde ayer</p>
+                    <h5 class="card-title text-muted">Stock general</h5>
+                    <h2 class="fw-bold" th:text="${#numbers.formatDecimal(stockGeneral, 0, 'COMMA', 2, 'POINT')}">0</h2>
+                    <p class="text-muted small mb-0">Unidades disponibles</p>
                 </div>
             </div>
         </div>
@@ -52,12 +52,49 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Ventas por día</h5>
-            <span class="text-muted small">Datos de ejemplo</span>
+            <span class="text-muted small">Datos del mes actual</span>
         </div>
         <div class="card-body">
             <canvas id="ventasChart" width="400" height="160"></canvas>
         </div>
     </div>
 </section>
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        const canvas = document.getElementById('ventasChart');
+        if (!canvas) {
+            return;
+        }
+        const labels = /*[[${ventasLabels}]]*/ [];
+        const values = /*[[${ventasData}]]*/ [];
+        if (labels.length === 0) {
+            canvas.parentElement.innerHTML = '<p class="text-muted mb-0">Sin registros de ventas para el periodo seleccionado.</p>';
+            return;
+        }
+        new Chart(canvas, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Monto de ventas',
+                    data: values,
+                    borderColor: '#0d6efd',
+                    backgroundColor: 'rgba(13,110,253,0.15)',
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    });
+</script>
 </body>
 </html>

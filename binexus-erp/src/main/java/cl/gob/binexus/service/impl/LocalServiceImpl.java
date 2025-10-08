@@ -41,4 +41,10 @@ public class LocalServiceImpl implements LocalService {
         local.setEstado(dto.getEstado());
         return localRepository.save(local);
     }
+
+    @Override
+    public Local obtenerPorId(Long id) {
+        return localRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Local no encontrado"));
+    }
 }

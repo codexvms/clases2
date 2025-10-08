@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <title>Nueva venta</title>
+</head>
+<body layout:decorate="~{layout}">
+<section layout:fragment="content" class="col-lg-10 mx-auto">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 fw-bold">Nueva venta</h1>
+            <p class="text-muted mb-0">Completa el asistente en tres pasos para registrar la venta.</p>
+        </div>
+        <a class="btn btn-outline-secondary" th:href="@{/ventas}"><i class="bi bi-arrow-left me-1"></i>Volver</a>
+    </div>
+    <form th:action="@{/ventas}" th:object="${venta}" method="post" id="ventaForm">
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="progress" style="height: 6px;">
+                    <div class="progress-bar" role="progressbar" style="width: 33%;" id="wizardProgress"></div>
+                </div>
+                <div class="wizard-step mt-4" data-step="1">
+                    <h5 class="fw-semibold mb-3">1. Selecciona cliente y local</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="clienteId">Cliente</label>
+                            <select class="form-select" id="clienteId" th:field="*{clienteId}" required>
+                                <option value="">Selecciona un cliente</option>
+                                <option th:each="cliente : ${clientes}" th:value="${cliente.id}"
+                                        th:text="${cliente.nombre + ' · ' + cliente.organizacion.nombre}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="localId">Local</label>
+                            <select class="form-select" id="localId" th:field="*{localId}" required>
+                                <option value="">Selecciona un local</option>
+                                <option th:each="local : ${locales}" th:value="${local.id}"
+                                        th:text="${local.nombre + ' · ' + local.organizacion.nombre}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="wizard-step d-none mt-4" data-step="2">
+                    <h5 class="fw-semibold mb-3">2. Agrega productos</h5>
+                    <div class="table-responsive">
+                        <table class="table align-middle" id="detallesTable">
+                            <thead>
+                            <tr>
+                                <th style="width: 30%">Producto</th>
+                                <th style="width: 15%">Cantidad</th>
+                                <th style="width: 15%">Precio</th>
+                                <th style="width: 15%">Costo envío</th>
+                                <th style="width: 15%" class="text-end">Subtotal</th>
+                                <th style="width: 10%"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="detalle, stat : *{detalles}">
+                                <td>
+                                    <select class="form-select detalle-producto" th:field="*{detalles[__${stat.index}__].productoId}" required>
+                                        <option value="">Selecciona</option>
+                                        <option th:each="producto : ${productos}" th:value="${producto.id}"
+                                                th:text="${producto.nombre}"></option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="number" class="form-control detalle-cantidad" th:field="*{detalles[__${stat.index}__].cantidad}" min="0.01" step="0.01" required>
+                                </td>
+                                <td>
+                                    <input type="number" class="form-control detalle-precio" th:field="*{detalles[__${stat.index}__].precioUnitario}" min="0.01" step="0.01" required>
+                                </td>
+                                <td>
+                                    <input type="number" class="form-control detalle-envio" th:field="*{detalles[__${stat.index}__].costoEnvio}" min="0" step="0.01">
+                                </td>
+                                <td class="text-end fw-semibold detalle-subtotal">0</td>
+                                <td class="text-end">
+                                    <button type="button" class="btn btn-link text-danger p-0 detalle-eliminar"><i class="bi bi-x-circle"></i></button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <button type="button" class="btn btn-outline-primary btn-sm" id="agregarDetalle"><i class="bi bi-plus-circle me-1"></i>Agregar producto</button>
+                </div>
+                <div class="wizard-step d-none mt-4" data-step="3">
+                    <h5 class="fw-semibold mb-3">3. Confirmación</h5>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label" for="tipoVenta">Tipo de venta</label>
+                            <select id="tipoVenta" class="form-select" th:field="*{tipoVenta}">
+                                <option th:each="tipo : ${tiposVenta}" th:value="${tipo}" th:text="${tipo}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="metodoPago">Método de pago</label>
+                            <select id="metodoPago" class="form-select" th:field="*{metodoPago}">
+                                <option th:each="metodo : ${metodosPago}" th:value="${metodo}" th:text="${metodo}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="estadoPago">Estado de pago</label>
+                            <select id="estadoPago" class="form-select" th:field="*{estadoPago}">
+                                <option th:each="estado : ${estadosPago}" th:value="${estado}" th:text="${estado}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="descuentoTotal">Descuento</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input type="number" id="descuentoTotal" class="form-control" th:field="*{descuentoTotal}" min="0" step="0.01">
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card bg-body-tertiary">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between">
+                                        <span>Total productos</span>
+                                        <span class="fw-semibold" id="resumenSubtotal">$0</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span>Descuento</span>
+                                        <span id="resumenDescuento">$0</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between border-top pt-2 mt-2">
+                                        <span class="fw-semibold">Monto final</span>
+                                        <span class="fw-bold text-primary" id="resumenTotal">$0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-between">
+            <button type="button" class="btn btn-light" id="btnAnterior" disabled>Anterior</button>
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-outline-primary" id="btnSiguiente">Siguiente</button>
+                <button type="submit" class="btn btn-primary d-none" id="btnConfirmar"><i class="bi bi-check2-circle me-1"></i>Confirmar venta</button>
+            </div>
+        </div>
+    </form>
+    <template id="detalleTemplate">
+        <tr>
+            <td>
+                <select class="form-select detalle-producto" required>
+                    <option value="">Selecciona</option>
+                    <option th:each="producto : ${productos}" th:value="${producto.id}" th:text="${producto.nombre}"></option>
+                </select>
+            </td>
+            <td><input type="number" class="form-control detalle-cantidad" min="0.01" step="0.01" required></td>
+            <td><input type="number" class="form-control detalle-precio" min="0.01" step="0.01" required></td>
+            <td><input type="number" class="form-control detalle-envio" min="0" step="0.01"></td>
+            <td class="text-end fw-semibold detalle-subtotal">$0</td>
+            <td class="text-end"><button type="button" class="btn btn-link text-danger p-0 detalle-eliminar"><i class="bi bi-x-circle"></i></button></td>
+        </tr>
+    </template>
+</section>
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        const steps = Array.from(document.querySelectorAll('.wizard-step'));
+        const progress = document.getElementById('wizardProgress');
+        const btnAnterior = document.getElementById('btnAnterior');
+        const btnSiguiente = document.getElementById('btnSiguiente');
+        const btnConfirmar = document.getElementById('btnConfirmar');
+        let pasoActual = 1;
+
+        const actualizarVista = () => {
+            steps.forEach(step => {
+                const stepNumber = parseInt(step.dataset.step);
+                step.classList.toggle('d-none', stepNumber !== pasoActual);
+            });
+            const avance = (pasoActual / steps.length) * 100;
+            progress.style.width = `${avance}%`;
+            btnAnterior.disabled = pasoActual === 1;
+            btnSiguiente.classList.toggle('d-none', pasoActual === steps.length);
+            btnConfirmar.classList.toggle('d-none', pasoActual !== steps.length);
+        };
+
+        btnAnterior.addEventListener('click', () => {
+            if (pasoActual > 1) {
+                pasoActual--;
+                actualizarVista();
+            }
+        });
+
+        btnSiguiente.addEventListener('click', () => {
+            if (pasoActual < steps.length) {
+                pasoActual++;
+                actualizarVista();
+            }
+        });
+
+        actualizarVista();
+
+        const tableBody = document.querySelector('#detallesTable tbody');
+        const template = document.getElementById('detalleTemplate');
+        const resumenSubtotal = document.getElementById('resumenSubtotal');
+        const resumenDescuento = document.getElementById('resumenDescuento');
+        const resumenTotal = document.getElementById('resumenTotal');
+        const descuentoInput = document.getElementById('descuentoTotal');
+
+        const renumerarCampos = () => {
+            tableBody.querySelectorAll('tr').forEach((row, index) => {
+                row.querySelectorAll('select, input').forEach(input => {
+                    const baseName = input.classList.contains('detalle-producto') ? 'productoId'
+                        : input.classList.contains('detalle-cantidad') ? 'cantidad'
+                            : input.classList.contains('detalle-precio') ? 'precioUnitario'
+                                : 'costoEnvio';
+                    input.setAttribute('name', `detalles[${index}].${baseName}`);
+                });
+            });
+            actualizarTotales();
+        };
+
+        const actualizarTotales = () => {
+            let subtotal = 0;
+            tableBody.querySelectorAll('tr').forEach(row => {
+                const cantidad = parseFloat(row.querySelector('.detalle-cantidad')?.value || '0');
+                const precio = parseFloat(row.querySelector('.detalle-precio')?.value || '0');
+                const subtotalLinea = cantidad * precio;
+                row.querySelector('.detalle-subtotal').textContent = `$${subtotalLinea.toFixed(2)}`;
+                if (!isNaN(subtotalLinea)) {
+                    subtotal += subtotalLinea;
+                }
+            });
+            const descuento = parseFloat(descuentoInput.value || '0');
+            const total = Math.max(subtotal - (isNaN(descuento) ? 0 : descuento), 0);
+            resumenSubtotal.textContent = `$${subtotal.toFixed(2)}`;
+            resumenDescuento.textContent = `$${(isNaN(descuento) ? 0 : descuento).toFixed(2)}`;
+            resumenTotal.textContent = `$${total.toFixed(2)}`;
+        };
+
+        document.getElementById('agregarDetalle').addEventListener('click', () => {
+            const clone = template.content.cloneNode(true);
+            tableBody.appendChild(clone);
+            renumerarCampos();
+        });
+
+        tableBody.addEventListener('input', event => {
+            if (event.target.classList.contains('detalle-cantidad') || event.target.classList.contains('detalle-precio') || event.target.classList.contains('detalle-envio')) {
+                actualizarTotales();
+            }
+        });
+
+        tableBody.addEventListener('click', event => {
+            if (event.target.closest('.detalle-eliminar')) {
+                const rows = tableBody.querySelectorAll('tr');
+                if (rows.length > 1) {
+                    event.target.closest('tr').remove();
+                    renumerarCampos();
+                }
+            }
+        });
+
+        descuentoInput.addEventListener('input', actualizarTotales);
+        renumerarCampos();
+    });
+</script>
+</body>
+</html>

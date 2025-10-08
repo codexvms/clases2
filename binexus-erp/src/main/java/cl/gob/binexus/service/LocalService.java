@@ -9,4 +9,6 @@ public interface LocalService {
     List<Local> listarLocales();
 
     Local guardarLocal(LocalFormDTO dto);
+
+    Local obtenerPorId(Long id);
 }

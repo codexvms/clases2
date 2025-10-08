@@ -48,4 +48,10 @@ public class OrganizacionServiceImpl implements OrganizacionService {
         organizacion.setEstado(dto.getEstado());
         return organizacionRepository.save(organizacion);
     }
+
+    @Override
+    public Organizacion obtenerPorId(Long id) {
+        return organizacionRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Organización no encontrada"));
+    }
 }

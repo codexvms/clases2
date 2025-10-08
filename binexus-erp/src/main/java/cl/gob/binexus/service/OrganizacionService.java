@@ -11,4 +11,6 @@ public interface OrganizacionService {
     OrganizacionFormDTO obtenerFormulario(Long id);
 
     Organizacion guardarOrganizacion(OrganizacionFormDTO dto);
+
+    Organizacion obtenerPorId(Long id);
 }

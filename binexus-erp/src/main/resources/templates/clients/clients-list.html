@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <title>Clientes</title>
+</head>
+<body layout:decorate="~{layout}">
+<section layout:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 fw-bold">Clientes</h1>
+            <p class="text-muted mb-0">Mantén actualizada la información de tus clientes.</p>
+        </div>
+        <a class="btn btn-primary" th:href="@{/clientes/new}"><i class="bi bi-person-plus me-1"></i>Nuevo cliente</a>
+    </div>
+    <form class="row g-3 mb-4" method="get" th:action="@{/clientes}">
+        <div class="col-md-4">
+            <label class="form-label" for="organizacionId">Organización</label>
+            <select class="form-select" id="organizacionId" name="organizacionId" onchange="this.form.submit()">
+                <option value="">Selecciona una organización</option>
+                <option th:each="org : ${organizaciones}" th:value="${org.id}" th:text="${org.nombre}"
+                        th:selected="${organizacionSeleccionada} == ${org.id}"></option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label" for="estado">Estado</label>
+            <select class="form-select" id="estado" name="estado">
+                <option value="">Todos</option>
+                <option th:each="estadoOpt : ${estados}" th:value="${estadoOpt}" th:text="${estadoOpt}"
+                        th:selected="${estadoSeleccionado} == ${estadoOpt}"></option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label" for="q">Buscar</label>
+            <div class="input-group">
+                <input type="text" class="form-control" id="q" name="q" placeholder="Nombre o correo" th:value="${query}">
+                <button type="submit" class="btn btn-outline-primary"><i class="bi bi-search"></i></button>
+            </div>
+        </div>
+    </form>
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Correo</th>
+                        <th>Teléfono</th>
+                        <th>Estado</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${clientes == null}">
+                        <td colspan="5" class="text-center text-muted py-4">Selecciona una organización para ver sus clientes.</td>
+                    </tr>
+                    <tr th:if="${clientes != null && clientes.isEmpty()}">
+                        <td colspan="5" class="text-center text-muted py-4">No se encontraron clientes con los filtros aplicados.</td>
+                    </tr>
+                    <tr th:each="cliente : ${clientes}">
+                        <td th:text="${cliente.nombre}"></td>
+                        <td>
+                            <span class="text-decoration-none" th:text="${cliente.correo}"></span>
+                        </td>
+                        <td th:text="${cliente.telefono}"></td>
+                        <td>
+                            <span class="badge" th:classappend="${cliente.estado.name() == 'ACTIVO' ? ' bg-success-subtle text-success' : ' bg-secondary-subtle text-secondary'}"
+                                  th:text="${cliente.estado}"></span>
+                        </td>
+                        <td class="text-end">
+                            <a class="btn btn-outline-secondary btn-sm" th:href="@{'/clientes/' + ${cliente.id} + '/edit'}"><i class="bi bi-pencil-square"></i></a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

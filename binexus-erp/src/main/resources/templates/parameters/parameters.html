@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <title>Parámetros</title>
+</head>
+<body layout:decorate="~{layout}">
+<section layout:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 fw-bold">Tipos y parámetros</h1>
+            <p class="text-muted mb-0">Configura atributos reutilizables para tus productos.</p>
+        </div>
+        <a class="btn btn-outline-secondary" th:href="@{/productos}"><i class="bi bi-box-seam me-1"></i>Ir a productos</a>
+    </div>
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card h-100">
+                <div class="card-header"><h5 class="mb-0">Tipo de parámetro</h5></div>
+                <div class="card-body">
+                    <form th:action="@{/admin/parametros/tipos}" th:object="${tipoParametro}" method="post" class="needs-validation" novalidate>
+                        <input type="hidden" th:field="*{id}">
+                        <div class="mb-3">
+                            <label class="form-label" for="descripcionTipo">Descripción</label>
+                            <input id="descripcionTipo" type="text" class="form-control" th:field="*{descripcion}" required>
+                            <div class="invalid-feedback">La descripción es obligatoria.</div>
+                            <div class="text-danger small" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></div>
+                        </div>
+                        <div class="text-danger mb-2" th:if="${#fields.hasGlobalErrors()}" th:each="err : ${#fields.globalErrors()}"
+                             th:text="${err}"></div>
+                        <div class="d-flex justify-content-end gap-2">
+                            <a class="btn btn-light" th:href="@{/admin/parametros}">Limpiar</a>
+                            <button class="btn btn-primary" type="submit"><i class="bi bi-save me-1"></i>Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header"><h5 class="mb-0">Nuevo parámetro</h5></div>
+                <div class="card-body">
+                    <form th:action="@{/admin/parametros/parametros}" th:object="${parametro}" method="post" class="needs-validation" novalidate>
+                        <input type="hidden" th:field="*{id}">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label" for="tipoParametroId">Tipo</label>
+                                <select id="tipoParametroId" class="form-select" th:field="*{tipoParametroId}" required>
+                                    <option value="">Selecciona un tipo</option>
+                                    <option th:each="tipo : ${tipos}" th:value="${tipo.id}" th:text="${tipo.descripcion}"></option>
+                                </select>
+                                <div class="invalid-feedback">Selecciona un tipo válido.</div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label" for="descripcionParam">Descripción</label>
+                                <input id="descripcionParam" class="form-control" type="text" th:field="*{descripcion}" required>
+                                <div class="invalid-feedback">La descripción es obligatoria.</div>
+                                <div class="text-danger small" th:if="${#fields.hasErrors('descripcion')}" th:errors="*{descripcion}"></div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label" for="estadoParametro">Estado</label>
+                                <select id="estadoParametro" class="form-select" th:field="*{estado}">
+                                    <option th:each="estadoOpt : ${estadosParametro}" th:value="${estadoOpt}" th:text="${estadoOpt}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="text-danger mt-3" th:if="${#fields.hasGlobalErrors()}" th:each="err : ${#fields.globalErrors()}"
+                             th:text="${err}"></div>
+                        <div class="d-flex justify-content-end gap-2 mt-3">
+                            <a class="btn btn-light" th:href="@{/admin/parametros}">Cancelar</a>
+                            <button class="btn btn-primary" type="submit"><i class="bi bi-save me-1"></i>Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header"><h5 class="mb-0">Listado</h5></div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped align-middle">
+                            <thead>
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Parámetro</th>
+                                <th>Estado</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:if="${parametros.isEmpty()}">
+                                <td colspan="4" class="text-center text-muted py-4">Sin parámetros registrados.</td>
+                            </tr>
+                            <tr th:each="entry : ${parametros}">
+                                <td class="fw-semibold" th:text="${entry.key.descripcion}" th:if="${entry.value.isEmpty()}"></td>
+                                <td colspan="3" class="text-muted" th:if="${entry.value.isEmpty()}">Sin datos asociados.</td>
+                                <th:block th:each="param, iterStat : ${entry.value}">
+                                    <tr>
+                                        <td th:text="${iterStat.index == 0 ? entry.key.descripcion : ''}"></td>
+                                        <td th:text="${param.descripcion}"></td>
+                                        <td>
+                                            <span class="badge" th:classappend="${param.estado.name() == 'ACTIVO' ? ' bg-success-subtle text-success' : ' bg-secondary-subtle text-secondary'}"
+                                                  th:text="${param.estado}"></span>
+                                        </td>
+                                        <td class="text-end">
+                                            <div class="btn-group">
+                                                <a class="btn btn-outline-secondary btn-sm"
+                                                   th:href="@{'/admin/parametros?parametroId=' + ${param.id}}"><i class="bi bi-pencil"></i></a>
+                                                <form th:action="@{'/admin/parametros/parametros/' + ${param.id} + '/estado'}" method="post" class="d-inline">
+                                                    <input type="hidden" name="estado"
+                                                           th:value="${param.estado.name() == 'ACTIVO' ? 'INACTIVO' : 'ACTIVO'}">
+                                                    <button type="submit" class="btn btn-outline-primary btn-sm"
+                                                            th:text="${param.estado.name() == 'ACTIVO' ? 'Inactivar' : 'Activar'}"></button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </th:block>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

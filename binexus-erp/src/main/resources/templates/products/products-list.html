@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <title>Productos</title>
+</head>
+<body layout:decorate="~{layout}">
+<section layout:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 fw-bold">Productos</h1>
+            <p class="text-muted mb-0">Administra el catálogo de productos y sus precios vigentes.</p>
+        </div>
+        <a class="btn btn-primary" th:href="@{/productos/new}"><i class="bi bi-plus-circle me-2"></i>Nuevo producto</a>
+    </div>
+    <form class="row g-3 mb-4" method="get" th:action="@{/productos}">
+        <div class="col-md-4">
+            <label for="organizacionId" class="form-label">Organización</label>
+            <select class="form-select" id="organizacionId" name="organizacionId">
+                <option value="">Todas</option>
+                <option th:each="org : ${organizaciones}" th:value="${org.id}"
+                        th:text="${org.nombre}" th:selected="${organizacionId} == ${org.id}"></option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="estado" class="form-label">Estado</label>
+            <select class="form-select" id="estado" name="estado">
+                <option value="">Todos</option>
+                <option th:each="estadoOpt : ${estados}" th:value="${estadoOpt}" th:text="${estadoOpt}"
+                        th:selected="${estadoSeleccionado} == ${estadoOpt}"></option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="q" class="form-label">Buscar</label>
+            <input type="text" class="form-control" id="q" name="q" placeholder="Nombre del producto"
+                   th:value="${query}">
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-search me-1"></i>Filtrar</button>
+        </div>
+    </form>
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Organización</th>
+                        <th>Estado</th>
+                        <th>Stock inicial</th>
+                        <th>Precio vigente</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${productos.isEmpty()}">
+                        <td colspan="6" class="text-center text-muted py-4">No se encontraron productos con los filtros aplicados.</td>
+                    </tr>
+                    <tr th:each="producto : ${productos}">
+                        <td>
+                            <span class="fw-semibold" th:text="${producto.nombre}"></span>
+                            <div class="text-muted small" th:if="${producto.atributo != null && producto.atributo.mantenedor != null}"
+                                 th:text="${producto.atributo.mantenedor.descripcion}"></div>
+                        </td>
+                        <td th:text="${producto.organizacion.nombre}"></td>
+                        <td>
+                            <span class="badge" th:classappend="${producto.estado.name() == 'ACTIVO' ? ' bg-success-subtle text-success' : ' bg-secondary-subtle text-secondary'}"
+                                  th:text="${producto.estado}"></span>
+                        </td>
+                        <td th:text="${#numbers.formatDecimal(producto.stockInicial, 0, 'COMMA', 2, 'POINT')}"></td>
+                        <td>
+                            <span th:if="${preciosVigentes[producto.id]} != null"
+                                  th:text="${#numbers.formatDecimal(preciosVigentes[producto.id], 0, 'COMMA', 2, 'POINT')}"></span>
+                            <span class="text-muted" th:if="${preciosVigentes[producto.id]} == null">Sin precio</span>
+                        </td>
+                        <td class="text-end">
+                            <div class="btn-group">
+                                <a class="btn btn-outline-secondary btn-sm" th:href="@{'/productos/' + ${producto.id} + '/edit'}">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+                                <button class="btn btn-outline-primary btn-sm js-price-history" type="button"
+                                        th:data-url="@{'/productos/' + ${producto.id} + '/precios'}" data-bs-toggle="modal"
+                                        data-bs-target="#priceHistoryModal">
+                                    <i class="bi bi-clock-history"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="modal fade" id="priceHistoryModal" tabindex="-1" aria-labelledby="priceHistoryLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="priceHistoryLabel">Historial de precios</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center text-muted py-4" id="priceHistoryContent">Cargando...</div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        const modal = document.getElementById('priceHistoryModal');
+        if (!modal) {
+            return;
+        }
+        modal.addEventListener('show.bs.modal', event => {
+            const button = event.relatedTarget;
+            const url = button ? button.getAttribute('data-url') : null;
+            const content = modal.querySelector('#priceHistoryContent');
+            if (!url || !content) {
+                return;
+            }
+            content.innerHTML = '<div class="text-center text-muted py-4">Cargando historial...</div>';
+            fetch(url)
+                .then(resp => resp.text())
+                .then(html => content.innerHTML = html)
+                .catch(() => content.innerHTML = '<p class="text-danger">No fue posible cargar el historial.</p>');
+        });
+    });
+</script>
+</body>
+</html>

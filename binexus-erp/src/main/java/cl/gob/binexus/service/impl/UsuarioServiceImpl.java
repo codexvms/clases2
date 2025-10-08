@@ -95,6 +95,12 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuarioRepository.deleteById(id);
     }
 
+    @Override
+    public Usuario obtenerPorCorreo(String correo) {
+        return usuarioRepository.findByCorreo(correo)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+    }
+
     private void validarCorreo(UsuarioFormDTO dto) {
         boolean correoExiste = usuarioRepository.findByCorreo(dto.getCorreo())
                 .filter(usuario -> !usuario.getId().equals(dto.getId()))

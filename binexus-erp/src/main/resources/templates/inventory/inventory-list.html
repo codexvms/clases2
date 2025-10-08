@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <title>Inventario</title>
+</head>
+<body layout:decorate="~{layout}">
+<section layout:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 fw-bold">Inventario</h1>
+            <p class="text-muted mb-0">Controla el stock disponible por organización y gestiona sus movimientos.</p>
+        </div>
+    </div>
+    <form class="row g-3 mb-4" method="get" th:action="@{/inventario}">
+        <div class="col-md-4">
+            <label for="organizacionId" class="form-label">Organización</label>
+            <select class="form-select" id="organizacionId" name="organizacionId" onchange="this.form.submit()">
+                <option value="">Selecciona una organización</option>
+                <option th:each="org : ${organizaciones}" th:value="${org.id}"
+                        th:text="${org.nombre}" th:selected="${organizacionSeleccionada} == ${org.id}"></option>
+            </select>
+        </div>
+    </form>
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Stock total</th>
+                        <th>Organización</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${inventarios == null || inventarios.isEmpty()}">
+                        <td colspan="4" class="text-center text-muted py-4">Selecciona una organización para ver su inventario.</td>
+                    </tr>
+                    <tr th:each="item : ${inventarios}">
+                        <td>
+                            <span class="fw-semibold" th:text="${item.producto.nombre}"></span>
+                            <div class="text-muted small" th:if="${item.producto.atributo != null && item.producto.atributo.mantenedor != null}"
+                                 th:text="${item.producto.atributo.mantenedor.descripcion}"></div>
+                        </td>
+                        <td th:text="${#numbers.formatDecimal(item.stockTotal, 0, 'COMMA', 2, 'POINT')}"></td>
+                        <td th:text="${item.organizacion.nombre}"></td>
+                        <td class="text-end">
+                            <div class="btn-group">
+                                <a class="btn btn-outline-secondary btn-sm"
+                                   th:href="@{'/inventario/' + ${item.id} + '/movimientos'}">
+                                    <i class="bi bi-list-ul"></i>
+                                </a>
+                                <button class="btn btn-outline-primary btn-sm" type="button"
+                                        data-bs-toggle="modal" data-bs-target="#ajusteModal"
+                                        th:data-id="${item.id}" th:data-producto="${item.producto.nombre}">
+                                    <i class="bi bi-box-arrow-in-down"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="modal fade" id="ajusteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title">Registrar movimiento</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="small text-muted" id="productoSeleccionado"></p>
+                    <div class="mb-3">
+                        <label for="tipoMovimiento" class="form-label">Tipo de movimiento</label>
+                        <select class="form-select" id="tipoMovimiento" name="tipo" required>
+                            <option th:each="tipo : ${tiposMovimiento}" th:value="${tipo}" th:text="${tipo}"></option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cantidadMovimiento" class="form-label">Cantidad</label>
+                        <input type="number" class="form-control" id="cantidadMovimiento" name="cantidad" min="0.01" step="0.01" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Confirmar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        const modal = document.getElementById('ajusteModal');
+        if (!modal) {
+            return;
+        }
+        modal.addEventListener('show.bs.modal', event => {
+            const button = event.relatedTarget;
+            const inventarioId = button.getAttribute('data-id');
+            const producto = button.getAttribute('data-producto');
+            modal.querySelector('form').setAttribute('action', `/inventario/${inventarioId}/ajustar`);
+            modal.querySelector('#productoSeleccionado').textContent = `Producto: ${producto}`;
+            modal.querySelector('#cantidadMovimiento').value = '';
+        });
+    });
+</script>
+</body>
+</html>

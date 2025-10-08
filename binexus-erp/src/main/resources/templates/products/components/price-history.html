@@ -1,0 +1,23 @@
+<div th:fragment="priceHistory">
+    <div th:if="${historial.isEmpty()}" class="text-center text-muted py-3">
+        Sin registros de precios anteriores.
+    </div>
+    <div th:if="${!historial.isEmpty()}" class="table-responsive">
+        <table class="table table-sm align-middle">
+            <thead>
+            <tr>
+                <th>Precio</th>
+                <th>Inicio vigencia</th>
+                <th>Fin vigencia</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="precio : ${historial}">
+                <td th:text="${#numbers.formatDecimal(precio.precioUnitario, 0, 'COMMA', 2, 'POINT')}"></td>
+                <td th:text="${precio.fechaInicioVigencia}"></td>
+                <td th:text="${precio.fechaFinVigencia != null ? precio.fechaFinVigencia : 'Vigente'}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

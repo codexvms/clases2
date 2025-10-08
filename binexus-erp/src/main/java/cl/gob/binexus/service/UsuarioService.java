@@ -14,4 +14,6 @@ public interface UsuarioService {
     Usuario guardarUsuario(UsuarioFormDTO dto);
 
     void eliminarUsuario(Long id);
+
+    Usuario obtenerPorCorreo(String correo);
 }

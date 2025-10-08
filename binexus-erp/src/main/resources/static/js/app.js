@@ -63,29 +63,6 @@
             showToast(toastMessage, 'success');
         }
 
-        const chartElement = document.getElementById('ventasChart');
-        if (chartElement) {
-            new Chart(chartElement, {
-                type: 'line',
-                data: {
-                    labels: ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
-                    datasets: [{
-                        label: 'Ventas',
-                        data: [12, 19, 9, 15, 22, 30, 18],
-                        fill: false,
-                        borderColor: '#0d6efd',
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {display: false}
-                    }
-                }
-            });
-        }
-
         document.querySelectorAll('form.needs-validation').forEach(form => {
             form.addEventListener('submit', event => {
                 if (!form.checkValidity()) {
